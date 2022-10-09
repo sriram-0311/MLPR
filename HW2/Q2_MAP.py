@@ -111,9 +111,9 @@ def plot_samples(samples_path, save_path='samples_scatterplot.pdf'):
     x_3 = samples_3['x'].tolist()
     y_3 = samples_3['y'].tolist()
     z_3 = samples_3['z'].tolist()
-    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', alpha=0.2)
-    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', alpha=0.2)
-    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', alpha=0.2)
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', color='blue',alpha=0.2)
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', color='red',alpha=0.2)
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', color='green',alpha=0.2)
     #ax.set_title("Samples from Multivariate Gaussian Distributions")
     ax.set_xlabel('1st Dimension, x')
     ax.set_ylabel('2nd Dimension, y')
@@ -217,9 +217,9 @@ def plot_classified_samples(samples_path, save_path='samples_scatterplot.pdf'):
     x_3 = samples_3['x'].tolist()
     y_3 = samples_3['y'].tolist()
     z_3 = samples_3['z'].tolist()
-    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', alpha=0.2)
-    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', alpha=0.2)
-    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', alpha=0.2)
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', color='blue',alpha=0.2)
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', color='red',alpha=0.2)
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', color='green',alpha=0.2)
     #ax.set_title("Samples from Multivariate Gaussian Distributions")
     ax.set_xlabel('1st Dimension, x')
     ax.set_ylabel('2nd Dimension, y')
@@ -278,9 +278,9 @@ def plot_correct_classified_samples(samples_path, save_path='samples_classified_
     ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', alpha=0.2, color='red')
     ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', alpha=0.2, color='red')
     ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', alpha=0.2, color='red')
-    ax.set_xlabel('1st Dimension, x')
-    ax.set_ylabel('2nd Dimension, y')
-    ax.set_zlabel('3rd Dimension, z')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
     #ax.get_legend().remove()
     green_patch = mpatches.Patch(color='green', label='Correct')
     red_patch = mpatches.Patch(color='red', label='Incorrect')
@@ -318,7 +318,7 @@ if __name__=='__main__':
     # Class 1
     cp_1 = 0.3
     # First Gaussian
-    mu_1  = [1,1,1]
+    mu_1  = [2,2,1]
     cov_1 = [[0.5, 0,   1  ],
              [0,   2,   0  ],
              [0,   0.5, 0.5]]
@@ -327,7 +327,7 @@ if __name__=='__main__':
     # Class 2
     cp_2 = 0.3
     # Second Guassian
-    mu_2  = [1,1,2]
+    mu_2  = [2,1,2]
     cov_2 = [[1,   0,   1  ],
              [0,   1,   0  ],
              [0,   0.5, 1  ]]
@@ -336,7 +336,7 @@ if __name__=='__main__':
     # Class 3
     cp_3 = 0.4
     # Third Gaussian
-    mu_3a  = [1,2,2]
+    mu_3a  = [3,2,2]
     cov_3a = [[3,   0,   0  ],
               [0,   1,   0  ],
               [0,   0,   0.5]]

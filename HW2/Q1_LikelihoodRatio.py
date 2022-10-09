@@ -257,13 +257,13 @@ def ldaClassifierVector(class1, class2):
     [V,d] = np.linalg.eig(ldaProjectionmatrix)
     print("V : \n",V)
     print("d : \n ",d)
-    if V[0] > V[1]:
+    if V[0] < V[1]:
         projectionVec = d[0]
     else:
         projectionVec = d[1]
     #projectionVector = V[:,1]
 
-    print(projectionVec)
+    print(d[1])
 
     return projectionVec
 
@@ -336,17 +336,48 @@ def ldaClassifier(vect, samples, mus, sigmas, priors):
     plt.close()
 
 def scatterplot(samples, ldaVector):
+    rng = default_rng()
     fig, ax = plt.subplots(1,1,figsize=(5,5))
+    transformedClass1 = np.array([0,0])
+    transformedClass2 = np.array([0,0])
     for idx,row in samples.iterrows():
         true_label = row['True Class Label']
         x = row['x']
         y = row['y']
         if(true_label==1):
-                ax.plot3D()
-        elif(true_label == 2):
-            ax.plot(x,y,'r^', alpha=0.1)
+            ax.plot(x,y,'go', alpha=0.1)
+            #transformedClass1 = np.append(transformedClass1, np.matmul(np.transpose(ldaVector), [x,y]))
         else:
-            ax.plot
+            ax.plot(x,y,'r^', alpha=0.1)
+            #transformedClass2 = np.append(transformedClass2, np.matmul(np.transpose(ldaVector), [x,y]))
+
+    # transmu1 = np.mean(transformedClass1)
+    # transmu2 = np.mean(transformedClass2)
+
+    # transcov1 = np.cov(transformedClass1)
+    # transcov2 = np.cov(transformedClass2)
+
+    # rv1 = norm(transmu1,transcov1)
+    # rv2 = norm(transmu2,transcov2)
+
+    # minx = min(min(transformedClass1),min(transformedClass2))
+    # maxx = max(max(transformedClass1), max(transformedClass2))
+
+    # print("u1 and u2 : \t",transmu1,transmu2)
+
+    # ax.plot(np.arange(minx,maxx,0.01),rv1.pdf(np.arange(minx,maxx,0.01)), 'bo', markersize=1)
+    # ax.plot(np.arange(minx,maxx,0.01),rv2.pdf(np.arange(minx,maxx,0.01)), 'go', markersize=1)
+
+    # ax.set_ylim(0,0.5)
+    # ax.set_xlim(-3,3)
+
+    ax.plot([-100*ldaVector[0],100*ldaVector[0]],[-100*ldaVector[1],100*ldaVector[1]],'black', markersize=10)
+
+
+    ax.set_xlim(-6,7)
+    ax.set_ylim(-4,8)
+
+    plt.savefig('LDATransformedVector.pdf')
 
 def scikitLDA(datum, labels, c1, c2):
     clf = LDA()
