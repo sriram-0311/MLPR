@@ -91,25 +91,25 @@ def implement_classifier_and_plots(samples, mus, sigmas, priors, save_path='./RO
     dis_0 = samples[samples['True Class Label']==1]['Discriminant'].tolist()
     dis_1 = samples[samples['True Class Label']==2]['Discriminant'].tolist()
     df = pd.DataFrame(columns=['False Positive', 'True Positive', 'Gamma', 'Probability Error'])
-    # for index, row in samples.iterrows():
-    #     discriminant   = row['Discriminant']
-    #     false_positive = len([class_dis for class_dis in dis_0 if class_dis>=discriminant])/len(dis_0)
-    #     true_positive = len([class_dis for class_dis in dis_1 if class_dis>=discriminant])/len(dis_1)
-    #     p_err = false_positive*prior_1+(1-true_positive)*prior_2
-    #     d = {'False Positive': false_positive, 'True Positive': true_positive,
-    #          'Gamma': discriminant, 'Probability Error': p_err}
-    #     df = df.append(d, ignore_index=True)
-
-    ThresholdValues = np.arange(0, 1000,1)
-    for thresh in ThresholdValues:
-        false_positive = len([class_dis for class_dis in dis_0 if class_dis>=thresh])/len(dis_0)
-        true_positive = len([class_dis for class_dis in dis_1 if class_dis>=thresh])/len(dis_1)
+    for index, row in samples.iterrows():
+        discriminant   = row['Discriminant']
+        false_positive = len([class_dis for class_dis in dis_0 if class_dis>=discriminant])/len(dis_0)
+        true_positive = len([class_dis for class_dis in dis_1 if class_dis>=discriminant])/len(dis_1)
         p_err = false_positive*prior_1+(1-true_positive)*prior_2
         d = {'False Positive': false_positive, 'True Positive': true_positive,
-             'Gamma': thresh, 'Probability Error': p_err}
+             'Gamma': discriminant, 'Probability Error': p_err}
         df = df.append(d, ignore_index=True)
-        if (thresh == 0):
-            print("ROC : ",false_positive,"\t",true_positive)
+
+    # ThresholdValues = np.arange(0, 1000,1)
+    # for thresh in ThresholdValues:
+    #     false_positive = len([class_dis for class_dis in dis_0 if class_dis>=thresh])/len(dis_0)
+    #     true_positive = len([class_dis for class_dis in dis_1 if class_dis>=thresh])/len(dis_1)
+    #     p_err = false_positive*prior_1+(1-true_positive)*prior_2
+    #     d = {'False Positive': false_positive, 'True Positive': true_positive,
+    #          'Gamma': thresh, 'Probability Error': p_err}
+    #     df = df.append(d, ignore_index=True)
+    #     if (thresh == 0):
+    #         print("ROC : ",false_positive,"\t",true_positive)
     df = df.sort_values('Probability Error')
     print(df)
     # Get info of minimum experimental probablility error
@@ -126,17 +126,17 @@ def implement_classifier_and_plots(samples, mus, sigmas, priors, save_path='./RO
     print(thy_min)
     fig, ax = plt.subplots(1,1, figsize=(5,5))
     # Plot ROC curve
-    ax.plot(df['False Positive'], df['True Positive'], 'ro', markersize=4)
+    ax.plot(df['False Positive'], df['True Positive'], 'go', markersize=2)
     # Plot experimental minimum
-    ax.plot(exp_min['False Positive'], exp_min['True Positive'], 'bo', label='Experimental', markersize=10)
+    ax.plot(exp_min['False Positive'], exp_min['True Positive'], 'bx', label='Experimental', markersize=10)
     # Plot theorectical minimum
-    ax.plot(thy_min['False Positive'], thy_min['True Positive'], 'go', label='Theoretical', markersize=10)
+    ax.plot(thy_min['False Positive'], thy_min['True Positive'], 'rx', label='Theoretical', markersize=10)
     ax.legend(title='Minimum Error Probabilities', loc='upper left')
     #ax.set_title('Minimum Expected Risk ROC Curve')
-    ax.set_xlabel('Probability of False Positive')
-    ax.set_ylabel('Probability of True Positive')
-    ax.yaxis.grid(color='lightgrey', linestyle=':')
-    ax.xaxis.grid(color='lightgrey', linestyle=':')
+    ax.set_xlabel('False Positive')
+    ax.set_ylabel('True Positive')
+    ax.yaxis.grid(color='lightgrey')
+    ax.xaxis.grid(color='lightgrey')
     ax.set_axisbelow(True)
     ax.set_xlim(0,1)
     ax.set_ylim(0,1)
@@ -162,6 +162,58 @@ def implement_classifier_and_plots(samples, mus, sigmas, priors, save_path='./RO
             else:
                 ax.plot(x,y,'r^', alpha=0.1)
     plt.savefig('q2_p1.pdf')
+
+def imp(samples, mean_0, mean_1, mean_2, cov_0, cov_1, cov_2):
+    discriminants = []
+    for i in range(0, samples.shape[0]):
+        sample = samples.iloc[i].to_numpy()[:-1]
+        discriminant = multivariate_normal.pdf(sample, mean_1, cov_1)/multivariate_normal.pdf(sample, mean_0, cov_0)
+        discriminant = (0.5*multivariate_normal.pdf(sample, mean_1, cov_1)+0.5*multivariate_normal.pdf(sample, mean_2, cov_2))/multivariate_normal.pdf(sample, mean_2, cov_2)
+        discriminants.append(discriminant)
+    samples['Discriminant'] = discriminants
+    samples = samples.sort_values('Discriminant')
+    dis_0 = samples[samples['True Class Label']==1]['Discriminant'].tolist()
+    dis_1 = samples[samples['True Class Label']==2]['Discriminant'].tolist()
+    df = pd.DataFrame(columns=['False Positive', 'True Positive', 'Gamma', 'Probability Error'])
+    for index, row in samples.iterrows():
+        discriminant   = row['Discriminant'] 
+        false_positive = len([class_dis for class_dis in dis_0 if class_dis>=discriminant])/len(dis_0)
+        true_positive = len([class_dis for class_dis in dis_1 if class_dis>=discriminant])/len(dis_1)
+        p_err = false_positive*0.65+(1-true_positive)*0.325
+        d = {'False Positive': false_positive, 'True Positive': true_positive, 
+             'Gamma': discriminant, 'Probability Error': p_err}
+        df = df.append(d, ignore_index=True)
+    df = df.sort_values('Probability Error')
+    # Get info of minimum experimental probablility error
+    exp_min = df.iloc[0]
+    print('Experimental Mimimum Error Info:\n')
+    print(exp_min)
+    # Calculate theorectical error
+    thy_gamma = 0.7/0.3
+    thy_lambdas = [len([class_dis for class_dis in dis_0 if class_dis>=thy_gamma])/len(dis_0),
+                len([class_dis for class_dis in dis_1 if class_dis>=thy_gamma])/len(dis_1)]
+    thy_p_err = thy_lambdas[0]*0.7 + (1-thy_lambdas[1])*0.3
+    thy_min = {'False Positive': thy_lambdas[0], 'True Positive': thy_lambdas[1], 'Gamma': thy_gamma, 'Probability Error': thy_p_err}
+    print('Theoretical Mimimum Error Info:\n')
+    print(thy_min)
+    fig, ax = plt.subplots(1,1, figsize=(5,5))
+    # Plot ROC curve
+    ax.plot(df['False Positive'], df['True Positive'], 'go', markersize=2)
+    # Plot experimental minimum
+    ax.plot(exp_min['False Positive'], exp_min['True Positive'], 'bx', label='Experimental', markersize=5)
+    # Plot theorectical minimum
+    ax.plot(thy_min['False Positive'], thy_min['True Positive'], 'rx', label='Theoretical', markersize=5)
+    ax.legend(title='Minimum Error', loc='upper right')
+    #ax.set_title('Minimum Expected Risk ROC Curve')
+    ax.set_xlabel('False Positive')
+    ax.set_ylabel('True Positive')
+    ax.yaxis.grid(color='lightgrey')
+    ax.xaxis.grid(color='lightgrey')
+    ax.set_axisbelow(True)
+    ax.set_xlim(0,1)
+    ax.set_ylim(0,1)
+
+    plt.savefig('ROCCurve.pdf')
 
 def classSeparator(samples, mu, sigma, priors):
     print("samples iloc : ",samples.iloc[1].to_numpy()[:-1])
@@ -284,54 +336,17 @@ def ldaClassifier(vect, samples, mus, sigmas, priors):
     plt.close()
 
 def scatterplot(samples, ldaVector):
-
-    # if samples['True Class Label'] == 1:
-    #     samples.plot.scatter(x='x',y='y', c='bo')
-    # else:
-    #     samples.plot.scatter(x='x',y='y', c='go')
-
-    rng = default_rng()
     fig, ax = plt.subplots(1,1,figsize=(5,5))
-    transformedClass1 = np.array([0,0])
-    transformedClass2 = np.array([0,0])
     for idx,row in samples.iterrows():
         true_label = row['True Class Label']
         x = row['x']
         y = row['y']
         if(true_label==1):
-            #ax.plot(x,y,'go', alpha=0.1)
-            transformedClass1 = np.append(transformedClass1, np.matmul(np.transpose(ldaVector), [x,y]))
+                ax.plot3D()
+        elif(true_label == 2):
+            ax.plot(x,y,'r^', alpha=0.1)
         else:
-            #ax.plot(x,y,'ro', alpha=0.1)
-            transformedClass2 = np.append(transformedClass2, np.matmul(np.transpose(ldaVector), [x,y]))
-
-    transmu1 = np.mean(transformedClass1)
-    transmu2 = np.mean(transformedClass2)
-
-    transcov1 = np.cov(transformedClass1)
-    transcov2 = np.cov(transformedClass2)
-
-    rv1 = norm(transmu1,transcov1)
-    rv2 = norm(transmu2,transcov2)
-
-    minx = min(min(transformedClass1),min(transformedClass2))
-    maxx = max(max(transformedClass1), max(transformedClass2))
-
-    print("u1 and u2 : \t",transmu1,transmu2)
-
-    ax.plot(np.arange(minx,maxx,0.01),rv1.pdf(np.arange(minx,maxx,0.01)), 'bo', markersize=1)
-    ax.plot(np.arange(minx,maxx,0.01),rv2.pdf(np.arange(minx,maxx,0.01)), 'go', markersize=1)
-
-    ax.set_ylim(0,0.5)
-    ax.set_xlim(-3,3)
-
-    #ax.plot([-100*ldaVector[0],100*ldaVector[0]],[-100*ldaVector[1],100*ldaVector[1]],'black', markersize=10)
-
-
-    # ax.set_xlim(-7,7)
-    # ax.set_ylim(-8,8)
-
-    plt.show()
+            ax.plot
 
 def scikitLDA(datum, labels, c1, c2):
     clf = LDA()
@@ -364,10 +379,12 @@ if __name__ == "__main__":
     class1, class2, datum, labels = classSeparator(test, mus, covs, priors)
     ldavector = ldaClassifierVector(class1,class2)
 
-    #scatterplot(test, ldavector)
+    scatterplot(test, ldavector)
 
-    #scikitLDA(datum, labels, class1, class2)
+    scikitLDA(datum, labels, class1, class2)
 
     ldaClassifier(ldavector,test, mus, covs, priors)
 
     #implement_classifier_and_plots(test, mus, covs, priors)
+
+    #imp(test, mus[0], mus[1],mus[2], covs[0], covs[1], covs[2])
