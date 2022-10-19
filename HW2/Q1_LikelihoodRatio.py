@@ -126,7 +126,7 @@ def implement_classifier_and_plots(samples, mus, sigmas, priors, save_path='./RO
     print(thy_min)
     fig, ax = plt.subplots(1,1, figsize=(5,5))
     # Plot ROC curve
-    ax.plot(df['False Positive'], df['True Positive'], 'go', markersize=2)
+    ax.plot(df['True Positive'], df['False Positive'], 'go', markersize=2)
     # Plot experimental minimum
     ax.plot(exp_min['False Positive'], exp_min['True Positive'], 'bx', label='Experimental', markersize=10)
     # Plot theorectical minimum
@@ -292,25 +292,25 @@ def ldaClassifier(vect, samples, mus, sigmas, priors):
     dis_0 = samples[samples['True Class Label']==1]['Discriminant'].tolist()
     dis_1 = samples[samples['True Class Label']==2]['Discriminant'].tolist()
     df = pd.DataFrame(columns=['False Positive', 'True Positive', 'Gamma', 'Probability Error'])
-    # for index, row in samples.iterrows():
-    #     discriminant   = row['Discriminant']
-    #     false_positive = len([class_dis for class_dis in dis_0 if class_dis>=discriminant])/len(dis_0)
-    #     true_positive = len([class_dis for class_dis in dis_1 if class_dis>=discriminant])/len(dis_1)
-    #     p_err = false_positive*prior_1+(1-true_positive)*prior_2
-    #     d = {'False Positive': false_positive, 'True Positive': true_positive,
-    #          'Gamma': discriminant, 'Probability Error': p_err}
-    #     df = df.append(d, ignore_index=True)
-
-    ThresholdValues = np.arange(-5000, 5000,1)
-    for thresh in ThresholdValues:
-        false_positive = len([class_dis for class_dis in dis_0 if class_dis>=thresh])/len(dis_0)
-        true_positive = len([class_dis for class_dis in dis_1 if class_dis>=thresh])/len(dis_1)
+    for index, row in samples.iterrows():
+        discriminant   = row['Discriminant']
+        false_positive = len([class_dis for class_dis in dis_0 if class_dis>=discriminant])/len(dis_0)
+        true_positive = len([class_dis for class_dis in dis_1 if class_dis>=discriminant])/len(dis_1)
         p_err = false_positive*prior_1+(1-true_positive)*prior_2
         d = {'False Positive': false_positive, 'True Positive': true_positive,
-             'Gamma': thresh, 'Probability Error': p_err}
+             'Gamma': discriminant, 'Probability Error': p_err}
         df = df.append(d, ignore_index=True)
-        if (thresh == 0):
-            print("ROC : ",false_positive,"\t",true_positive)
+
+    # ThresholdValues = np.arange(-5000, 5000,1)
+    # for thresh in ThresholdValues:
+    #     false_positive = len([class_dis for class_dis in dis_0 if class_dis>=thresh])/len(dis_0)
+    #     true_positive = len([class_dis for class_dis in dis_1 if class_dis>=thresh])/len(dis_1)
+    #     p_err = false_positive*prior_1+(1-true_positive)*prior_2
+    #     d = {'False Positive': false_positive, 'True Positive': true_positive,
+    #          'Gamma': thresh, 'Probability Error': p_err}
+    #     df = df.append(d, ignore_index=True)
+    #     if (thresh == 0):
+    #         print("ROC : ",false_positive,"\t",true_positive)
     df = df.sort_values('Probability Error')
     print(df)
     # Get info of minimum experimental probablility error
@@ -329,8 +329,8 @@ def ldaClassifier(vect, samples, mus, sigmas, priors):
     ax.yaxis.grid(color='lightgrey', linestyle=':')
     ax.xaxis.grid(color='lightgrey', linestyle=':')
     ax.set_axisbelow(True)
-    ax.set_xlim(-2,2)
-    ax.set_ylim(-2,2)
+    ax.set_xlim(0,1)
+    ax.set_ylim(0,1)
     plt.savefig('ROC_curve_LDA.pdf')
     plt.clf()
     plt.close()
@@ -372,7 +372,12 @@ def scatterplot(samples, ldaVector):
     # ax.set_xlim(-3,3)
 
     ax.plot([-100*ldaVector[0],100*ldaVector[0]],[-100*ldaVector[1],100*ldaVector[1]],'black', markersize=10)
-
+    ax.set_xlabel('x1')
+    ax.set_ylabel('x2')
+    ax.yaxis.grid(color='lightgrey', linestyle=':')
+    ax.xaxis.grid(color='lightgrey', linestyle=':')
+    ax.set_axisbelow(True)
+    ax.legend(title='LDA Vector and Random generated data', loc='upper left')
 
     ax.set_xlim(-6,7)
     ax.set_ylim(-4,8)
@@ -410,12 +415,12 @@ if __name__ == "__main__":
     class1, class2, datum, labels = classSeparator(test, mus, covs, priors)
     ldavector = ldaClassifierVector(class1,class2)
 
-    scatterplot(test, ldavector)
+    #scatterplot(test, ldavector)
 
-    scikitLDA(datum, labels, class1, class2)
+    #scikitLDA(datum, labels, class1, class2)
 
-    ldaClassifier(ldavector,test, mus, covs, priors)
+    #ldaClassifier(ldavector,test, mus, covs, priors)
 
-    #implement_classifier_and_plots(test, mus, covs, priors)
+    implement_classifier_and_plots(test, mus, covs, priors)
 
     #imp(test, mus[0], mus[1],mus[2], covs[0], covs[1], covs[2])

@@ -1,0 +1,286 @@
+import numpy as np
+from numpy.random import default_rng
+import matplotlib.pyplot as plt
+import pandas as pd
+import random
+from scipy.stats import multivariate_normal
+import seaborn as sns
+
+def randomSampling(mu_1, mu_2, mu_3a, mu_3b, cov_1, cov_2, cov_3a, cov_3b, cp_1, cp_2, cp_3):
+    rng = default_rng()
+    overall_size = 10000
+    size_1 = 0
+    size_2 = 0
+    size_3a = 0
+    size_3b = 0
+    for i in range(0, overall_size) :
+        r = random.random()
+        if(r < cp_1):
+            size_1 = size_1 + 1
+        elif(r < cp_1+cp_2):
+            size_2 = size_2 + 1
+        elif(r < cp_1+cp_2+(cp_3/2)):
+            size_3a = size_3a + 1
+        else:
+            size_3b = size_3b + 1
+    samples_1 = rng.multivariate_normal(mean=mu_1, cov=cov_1, size=size_1)
+    samples_1 = pd.DataFrame(samples_1, columns=['x','y','z'])
+    samples_1['True Class Label'] = 1
+    samples_2 = rng.multivariate_normal(mean=mu_2, cov=cov_2, size=size_2)
+    samples_2 = pd.DataFrame(samples_2, columns=['x','y','z'])
+    samples_2['True Class Label'] = 2
+    samples_3a = rng.multivariate_normal(mean=mu_3a, cov=cov_3a, size=size_3a)
+    samples_3a = pd.DataFrame(samples_3a, columns=['x','y','z'])
+    samples_3a['True Class Label'] = 3
+    samples_3b = rng.multivariate_normal(mean=mu_3b, cov=cov_3b, size=size_3b)
+    samples_3b = pd.DataFrame(samples_3a, columns=['x','y','z'])
+    samples_3b['True Class Label'] = 3
+    samples   = samples_1.append([samples_2, samples_3a, samples_3b])
+    return samples
+
+def writeToFile(samples, path):
+    samples.to_csv(path)
+
+def readFromFile(path):
+    samples = pd.read_csv(path, index_col=0)
+    return samples
+
+def plot_samples(samples_path, path='samples_scatterplot.pdf'):
+    samples = readFromFile(path=samples_path)
+    fig = plt.figure(figsize = (5,5))
+    fig.subplots_adjust(left=0.01, right=0.985, top=0.99, bottom=0.01, wspace=0)
+    ax = plt.axes(projection ="3d")
+    samples_1 = samples[samples['True Class Label']==1]
+    samples_2 = samples[samples['True Class Label']==2]
+    samples_3 = samples[samples['True Class Label']==3]
+    x_1 = samples_1['x'].tolist()
+    y_1 = samples_1['y'].tolist()
+    z_1 = samples_1['z'].tolist()
+    x_2 = samples_2['x'].tolist()
+    y_2 = samples_2['y'].tolist()
+    z_2 = samples_2['z'].tolist()
+    x_3 = samples_3['x'].tolist()
+    y_3 = samples_3['y'].tolist()
+    z_3 = samples_3['z'].tolist()
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', color='blue',alpha=0.2)
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', color='red',alpha=0.2)
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', color='green',alpha=0.2)
+    #ax.set_title("Samples from Multivariate Gaussian Distributions")
+    ax.set_xlabel('1st Dimension, x')
+    ax.set_ylabel('2nd Dimension, y')
+    ax.set_zlabel('3rd Dimension, z')
+    ax.legend(loc='upper left', title='Class Label')
+    plt.savefig(path)
+    plt.clf()
+    return None
+
+def plot_decision_matrix(samplePath, path='./decision_matrix.pdf'):
+    samples = readFromFile(path=samplePath)
+    pred = samples['ERM Classification'].tolist()
+    act  = samples['True Class Label'].tolist()
+    confusion = confusion_matrix(act, pred, normalize='true')
+    print(confusion)
+    sns.heatmap(data=confusion,cmap="YlOrRd",annot=True,)
+    plt.xlabel('Decision')
+    plt.ylabel('True Class Label')
+    plt.tight_layout()
+    plt.savefig(path)
+    plt.clf()
+    plt.close()
+
+def plot_classified_samples(samplePath, path='samples_scatterplot.pdf'):
+    samples = readFromFile(path=samplePath)
+    fig = plt.figure(figsize = (5, 5))
+    fig.subplots_adjust(left=0.01, right=0.985, top=0.99, bottom=0.01, wspace=0)
+    ax = plt.axes(projection ="3d")
+    samples_1 = samples[samples['ERM Classification']==1]
+    samples_2 = samples[samples['ERM Classification']==2]
+    samples_3 = samples[samples['ERM Classification']==3]
+    x_1 = samples_1['x'].tolist()
+    y_1 = samples_1['y'].tolist()
+    z_1 = samples_1['z'].tolist()
+    x_2 = samples_2['x'].tolist()
+    y_2 = samples_2['y'].tolist()
+    z_2 = samples_2['z'].tolist()
+    x_3 = samples_3['x'].tolist()
+    y_3 = samples_3['y'].tolist()
+    z_3 = samples_3['z'].tolist()
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', color='blue',alpha=0.2)
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', color='red',alpha=0.2)
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', color='green',alpha=0.2)
+    #ax.set_title("Samples from Multivariate Gaussian Distributions")
+    ax.set_xlabel('1st Dimension, x')
+    ax.set_ylabel('2nd Dimension, y')
+    ax.set_zlabel('3rd Dimension, z')
+    ax.legend(loc='upper left', title='Class Label')
+    plt.savefig(path)
+    plt.clf()
+    return None
+
+def plot_correct_classified_samples(samplePath, path='samples_classified_scatterplot.pdf'):
+    samples = readFromFile(path=samplePath)
+    fig = plt.figure(figsize = (5,5))
+    fig.subplots_adjust(left=0.01, right=0.985, top=0.99, bottom=0.01, wspace=0)
+    ax = plt.axes(projection ="3d")
+    # Plot correct
+    correct = samples[samples['Correct']==True]
+    samples_1 = correct[correct['True Class Label']==1]
+    samples_2 = correct[correct['True Class Label']==2]
+    samples_3 = correct[correct['True Class Label']==3]
+    x_1 = samples_1['x'].tolist()
+    y_1 = samples_1['y'].tolist()
+    z_1 = samples_1['z'].tolist()
+    x_2 = samples_2['x'].tolist()
+    y_2 = samples_2['y'].tolist()
+    z_2 = samples_2['z'].tolist()
+    x_3 = samples_3['x'].tolist()
+    y_3 = samples_3['y'].tolist()
+    z_3 = samples_3['z'].tolist()
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', alpha=0.2, color='green')
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', alpha=0.2, color='green')
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', alpha=0.2, color='green')
+    # Plot incorrect
+    correct = samples[samples['Correct']==False]
+    samples_1 = correct[correct['True Class Label']==1]
+    samples_2 = correct[correct['True Class Label']==2]
+    samples_3 = correct[correct['True Class Label']==3]
+    x_1 = samples_1['x'].tolist()
+    y_1 = samples_1['y'].tolist()
+    z_1 = samples_1['z'].tolist()
+    x_2 = samples_2['x'].tolist()
+    y_2 = samples_2['y'].tolist()
+    z_2 = samples_2['z'].tolist()
+    x_3 = samples_3['x'].tolist()
+    y_3 = samples_3['y'].tolist()
+    z_3 = samples_3['z'].tolist()
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', alpha=0.2, color='red')
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', alpha=0.2, color='red')
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', alpha=0.2, color='red')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    #ax.get_legend().remove()
+    green_patch = mpatches.Patch(color='green', label='Correct')
+    red_patch = mpatches.Patch(color='red', label='Incorrect')
+    ax.legend(handles=[green_patch, red_patch], loc='upper left', title='Classification')
+    plt.savefig(path)
+    plt.clf()
+    return None
+
+if __name__=='__main__':
+    sample_info = pd.DataFrame(columns=['P','mu','cov'])
+    # Class 1
+    cp_1 = 0.3
+    # First Gaussian
+    mu_1  = [2,2,1]
+    cov_1 = [[0.5, 0,   1  ],[0,   2,   0  ],[0,   0.5, 0.5]]
+    d = {'P':cp_1,'mu':mu_1,'cov':cov_1}
+    sample_info = sample_info.append(d,ignore_index=True)
+    # Class 2
+    cp_2 = 0.3
+    # Second Guassian
+    mu_2  = [2,1,2]
+    cov_2 = [[1,   0,   1  ],[0,   1,   0  ],[0,   0.5, 1  ]]
+    d = {'P':cp_2,'mu':mu_2,'cov':cov_2}
+    sample_info = sample_info.append(d,ignore_index=True)
+    # Class 3
+    cp_3 = 0.4
+    # Third Gaussian
+    mu_3a  = [3,2,2]
+    cov_3a = [[3,   0,   0  ],[0,   1,   0  ],[0,   0,   0.5]]
+    d = {'P':(cp_3/2),'mu':mu_3a,'cov':cov_3a}
+    sample_info = sample_info.append(d,ignore_index=True)
+    # Fourth Gaussian
+    mu_3b  = [1,2,1]
+    cov_3b = [[1,   0,   1  ],[0,   1,   0  ],[0,   0,   2  ]]
+    d = {'P':(cp_3/2),'mu':mu_3b,'cov':cov_3b}
+    sample_info = sample_info.append(d,ignore_index=True)
+
+    loss_matrix_10 = [[0,   1,   10  , 10],[1,   0,   10  , 10],[1,   1,   0   , 0 ],[1,   1,   0   , 0 ]]
+    loss_matrix_100 = [[0,   1,  100  , 100],[1,   0,  100  , 100],[1,   1,  0    , 0  ],[1,   1,  0    , 0  ]]
+
+    samplePath = './samplesa.csv'
+    samples_b_10  = './samples10.csv'
+    samples_b_100 = './samples100.csv'
+    samples = randomSampling(mu_1, mu_2, mu_3a, mu_3b, cov_1, cov_2, cov_3a, cov_3b, cp_1, cp_2, cp_3)
+    writeToFile(samples, samplePath)
+    plot_samples(samplePath, path='samples_scatterplot_a.pdf')
+def plot_classified_samples(samplePath, path='samples_scatterplot.pdf'):
+    samples = readFromFile(path=samplePath)
+    fig = plt.figure(figsize = (5, 5))
+    fig.subplots_adjust(left=0.01, right=0.985, top=0.99, bottom=0.01, wspace=0)
+    ax = plt.axes(projection ="3d")
+    samples_1 = samples[samples['ERM Classification']==1]
+    samples_2 = samples[samples['ERM Classification']==2]
+    samples_3 = samples[samples['ERM Classification']==3]
+    x_1 = samples_1['x'].tolist()
+    y_1 = samples_1['y'].tolist()
+    z_1 = samples_1['z'].tolist()
+    x_2 = samples_2['x'].tolist()
+    y_2 = samples_2['y'].tolist()
+    z_2 = samples_2['z'].tolist()
+    x_3 = samples_3['x'].tolist()
+    y_3 = samples_3['y'].tolist()
+    z_3 = samples_3['z'].tolist()
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', color='blue',alpha=0.2)
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', color='red',alpha=0.2)
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', color='green',alpha=0.2)
+    #ax.set_title("Samples from Multivariate Gaussian Distributions")
+    ax.set_xlabel('1st Dimension, x')
+    ax.set_ylabel('2nd Dimension, y')
+    ax.set_zlabel('3rd Dimension, z')
+    ax.legend(loc='upper left', title='Class Label')
+    plt.savefig(path)
+    plt.clf()
+    return None
+
+def plot_correct_classified_samples(samplePath, path='samples_classified_scatterplot.pdf'):
+    samples = readFromFile(path=samplePath)
+    fig = plt.figure(figsize = (5,5))
+    fig.subplots_adjust(left=0.01, right=0.985, top=0.99, bottom=0.01, wspace=0)
+    ax = plt.axes(projection ="3d")
+    # Plot correct
+    correct = samples[samples['Correct']==True]
+    samples_1 = correct[correct['True Class Label']==1]
+    samples_2 = correct[correct['True Class Label']==2]
+    samples_3 = correct[correct['True Class Label']==3]
+    x_1 = samples_1['x'].tolist()
+    y_1 = samples_1['y'].tolist()
+    z_1 = samples_1['z'].tolist()
+    x_2 = samples_2['x'].tolist()
+    y_2 = samples_2['y'].tolist()
+    z_2 = samples_2['z'].tolist()
+    x_3 = samples_3['x'].tolist()
+    y_3 = samples_3['y'].tolist()
+    z_3 = samples_3['z'].tolist()
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', alpha=0.2, color='green')
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', alpha=0.2, color='green')
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', alpha=0.2, color='green')
+    # Plot incorrect
+    correct = samples[samples['Correct']==False]
+    samples_1 = correct[correct['True Class Label']==1]
+    samples_2 = correct[correct['True Class Label']==2]
+    samples_3 = correct[correct['True Class Label']==3]
+    x_1 = samples_1['x'].tolist()
+    y_1 = samples_1['y'].tolist()
+    z_1 = samples_1['z'].tolist()
+    x_2 = samples_2['x'].tolist()
+    y_2 = samples_2['y'].tolist()
+    z_2 = samples_2['z'].tolist()
+    x_3 = samples_3['x'].tolist()
+    y_3 = samples_3['y'].tolist()
+    z_3 = samples_3['z'].tolist()
+    ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', alpha=0.2, color='red')
+    ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', alpha=0.2, color='red')
+    ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', alpha=0.2, color='red')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.set_zlabel('z')
+    #ax.get_legend().remove()
+    green_patch = mpatches.Patch(color='green', label='Correct')
+    red_patch = mpatches.Patch(color='red', label='Incorrect')
+    ax.legend(handles=[green_patch, red_patch], loc='upper left', title='Classification')
+    plt.savefig(path)
+    plt.clf()
+    return None
+
