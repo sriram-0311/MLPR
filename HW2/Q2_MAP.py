@@ -1,14 +1,7 @@
 import numpy as np
 from numpy.random import default_rng
-import matplotlib.pyplot as plt
 import pandas as pd
-import matplotlib as mpl
-import math
-import random
 from scipy.stats import multivariate_normal
-import matplotlib.patches as mpatches
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
 from Utilities import *
 
 def make_decisions(samplePath, sample_info, loss_matrix=[[0,1,1,1],[1,0,1,1],[1,1,0,1],[1,1,1,0]]):
@@ -92,17 +85,17 @@ if __name__=='__main__':
     plot_samples(samplePath, path='samples_scatterplot_a.pdf')
     samples = make_decisions(samplePath, sample_info)
     writeToFile(samples, samplePath)
-    plot_classified_samples(samplePath, path='samples_classified_scatterplot.pdf')
-    plot_correct_classified_samples(samplePath, path='samples_correct_classified_scatterplot.pdf')
+    plotClassifiedSamples(samplePath, path='samples_classified_scatterplot.pdf')
+    plotCorrectClassifiedSamples(samplePath, path='samples_correct_classified_scatterplot.pdf')
 
     samples_10 = make_decisions(samplePath, sample_info, loss_matrix=loss_matrix_10)
     writeToFile(samples_10, samples_b_10)
-    plot_classified_samples(samples_b_10, path='samples_classified_scatterplot_10.pdf')
-    plot_correct_classified_samples(samples_b_10, path='samples_correct_classified_scatterplot_10.pdf')
+    plotClassifiedSamples(samples_b_10, path='samples_classified_scatterplot_10.pdf')
+    plotCorrectClassifiedSamples(samples_b_10, path='samples_correct_classified_scatterplot_10.pdf')
     samples_100 = make_decisions(samplePath, sample_info, loss_matrix=loss_matrix_100)
     writeToFile(samples_100, samples_b_100)
-    plot_classified_samples(samples_b_100, path='samples_classified_scatterplot_100.pdf')
-    plot_correct_classified_samples(samples_b_100, path='samples_correct_classified_scatterplot_100.pdf')
+    plotClassifiedSamples(samples_b_100, path='samples_classified_scatterplot_100.pdf')
+    plotCorrectClassifiedSamples(samples_b_100, path='samples_correct_classified_scatterplot_100.pdf')
     plot_decision_matrix(samplePath, path='./decision_matrix.pdf')
     plot_decision_matrix(samples_b_10, path='./decision_matrix_10.pdf')
     plot_decision_matrix(samples_b_100, path='./decision_matrix_100.pdf')

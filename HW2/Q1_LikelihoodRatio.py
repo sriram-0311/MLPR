@@ -99,17 +99,6 @@ def implement_classifier_and_plots(samples, mus, sigmas, priors, save_path='./RO
         d = {'False Positive': false_positive, 'True Positive': true_positive,
              'Gamma': discriminant, 'Probability Error': p_err}
         df = df.append(d, ignore_index=True)
-
-    # ThresholdValues = np.arange(0, 1000,1)
-    # for thresh in ThresholdValues:
-    #     false_positive = len([class_dis for class_dis in dis_0 if class_dis>=thresh])/len(dis_0)
-    #     true_positive = len([class_dis for class_dis in dis_1 if class_dis>=thresh])/len(dis_1)
-    #     p_err = false_positive*prior_1+(1-true_positive)*prior_2
-    #     d = {'False Positive': false_positive, 'True Positive': true_positive,
-    #          'Gamma': thresh, 'Probability Error': p_err}
-    #     df = df.append(d, ignore_index=True)
-    #     if (thresh == 0):
-    #         print("ROC : ",false_positive,"\t",true_positive)
     df = df.sort_values('Probability Error')
     print(df)
     # Get info of minimum experimental probablility error
