@@ -38,7 +38,7 @@ def risk(i , x , loss_matrix, sample_info):
     return risk
 
 if __name__=='__main__':
-    sample_info = pd.DataFrame(columns=['P','mu','cov']
+    sample_info = pd.DataFrame(columns=['P','mu','cov'])
     cp_1 = 0.3
     mu_1  = [2,2,1]
     cov_1 = [[0.5, 0,   1  ],[0,   2,   0  ],[0,   0.5, 0.5]]
