@@ -47,25 +47,6 @@ def generate_data(mus, sigmas, priors, N):
     return samples
 
 def implement_classifier_and_plots(samples, mus, sigmas, priors, save_path='./ROC_curve.pdf'):
-    '''
-    Plots the minimum risk and ROC curve with theorectical and experimental probabilites.
-    Parameters
-    ----------
-    samples_path: string
-        File containing the sample data
-    mus: array
-        The vectors of mu for the two classes.
-    sigmas: array
-        The matrixes of sigma for the two classes.
-    priors: array
-        The probabilites of the labels.
-    Returns
-    -------
-    exp_min: dict
-        Info of the experimental minimum error.
-    thy_min: dict
-        Info of the theorectical minimum error.
-    '''
     # Make decisions
     discriminants = []
     decisions = []

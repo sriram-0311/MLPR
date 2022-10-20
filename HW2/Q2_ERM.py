@@ -11,7 +11,7 @@ def make_decisions(samplePath, sample_info, loss_matrix=[[0,1,1,1],[1,0,1,1],[1,
     for i, row in samples.iterrows():
         # Modify class label for computation
         distribution = int(row['True Class Label'])
-        choice = np.argmin([risk(0,[row['x'],row['y'],row['z']],loss_matrix,sample_info), risk(1,[row['x'],row['y'],row['z']],loss_matrix,sample_info), 
+        choice = np.argmin([risk(0,[row['x'],row['y'],row['z']],loss_matrix,sample_info), risk(1,[row['x'],row['y'],row['z']],loss_matrix,sample_info),
                             risk(2,[row['x'],row['y'],row['z']],loss_matrix,sample_info), risk(3,[row['x'],row['y'],row['z']],loss_matrix,sample_info)])
         # Make sure 3a and 3b are together
         if(choice==0):
