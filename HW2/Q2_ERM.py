@@ -9,11 +9,9 @@ def make_decisions(samplePath, sample_info, loss_matrix=[[0,1,1,1],[1,0,1,1],[1,
     choices  = []
     correct = []
     for i, row in samples.iterrows():
-        # Modify class label for computation
         distribution = int(row['True Class Label'])
         choice = np.argmin([risk(0,[row['x'],row['y'],row['z']],loss_matrix,sample_info), risk(1,[row['x'],row['y'],row['z']],loss_matrix,sample_info),
                             risk(2,[row['x'],row['y'],row['z']],loss_matrix,sample_info), risk(3,[row['x'],row['y'],row['z']],loss_matrix,sample_info)])
-        # Make sure 3a and 3b are together
         if(choice==0):
             choices.append(1)
             choice = 1
@@ -23,7 +21,6 @@ def make_decisions(samplePath, sample_info, loss_matrix=[[0,1,1,1],[1,0,1,1],[1,
         else:
             choices.append(3)
             choice = 3
-        # Check if classification was correct or not
         if(choice==distribution):
             correct.append(True)
         else:
@@ -35,40 +32,28 @@ def make_decisions(samplePath, sample_info, loss_matrix=[[0,1,1,1],[1,0,1,1],[1,
 def risk(i , x , loss_matrix, sample_info):
     risk = 0
     for j, field in sample_info.iterrows():
-        #  Probability, mu, sigma^2
-        #print(j)
         if(i==j):
             continue
-        #print(loss_matrix[i][j])
-        #print(multivariate_normal.pdf(x,row['mu'],row['cov']))
         risk = risk + loss_matrix[i][j]*field['P']*multivariate_normal.pdf(x,field['mu'],field['cov'])
-        #print(risk)
     return risk
 
 if __name__=='__main__':
-    sample_info = pd.DataFrame(columns=['P','mu','cov'])
-    # Class 1
+    sample_info = pd.DataFrame(columns=['P','mu','cov']
     cp_1 = 0.3
-    # First Gaussian
     mu_1  = [2,2,1]
     cov_1 = [[0.5, 0,   1  ],[0,   2,   0  ],[0,   0.5, 0.5]]
     d = {'P':cp_1,'mu':mu_1,'cov':cov_1}
     sample_info = sample_info.append(d,ignore_index=True)
-    # Class 2
     cp_2 = 0.3
-    # Second Guassian
     mu_2  = [2,1,2]
     cov_2 = [[1,   0,   1  ],[0,   1,   0  ],[0,   0.5, 1  ]]
     d = {'P':cp_2,'mu':mu_2,'cov':cov_2}
     sample_info = sample_info.append(d,ignore_index=True)
-    # Class 3
     cp_3 = 0.4
-    # Third Gaussian
     mu_3a  = [3,2,2]
     cov_3a = [[3,   0,   0  ],[0,   1,   0  ],[0,   0,   0.5]]
     d = {'P':(cp_3/2),'mu':mu_3a,'cov':cov_3a}
     sample_info = sample_info.append(d,ignore_index=True)
-    # Fourth Gaussian
     mu_3b  = [1,2,1]
     cov_3b = [[1,   0,   1  ],[0,   1,   0  ],[0,   0,   2  ]]
     d = {'P':(cp_3/2),'mu':mu_3b,'cov':cov_3b}

@@ -110,7 +110,6 @@ def plotClassifiedSamples(samplePath, path='samples_scatterplot.pdf'):
     ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', color='blue',alpha=0.2)
     ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', color='red',alpha=0.2)
     ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', color='green',alpha=0.2)
-    #ax.set_title("Samples from Multivariate Gaussian Distributions")
     ax.set_xlabel('1st Dimension, x')
     ax.set_ylabel('2nd Dimension, y')
     ax.set_zlabel('3rd Dimension, z')
@@ -124,7 +123,6 @@ def plotCorrectClassifiedSamples(samplePath, path='samples_classified_scatterplo
     fig = plt.figure(figsize = (5,5))
     fig.subplots_adjust(left=0.01, right=0.985, top=0.99, bottom=0.01, wspace=0)
     ax = plt.axes(projection ="3d")
-    # Plot correct
     correct = samples[samples['Correct']==True]
     Class1 = correct[correct['True Class Label']==1]
     Class2 = correct[correct['True Class Label']==2]
@@ -141,7 +139,6 @@ def plotCorrectClassifiedSamples(samplePath, path='samples_classified_scatterplo
     ax.scatter3D(x_1, y_1, z_1, label='1', marker='o', alpha=0.2, color='green')
     ax.scatter3D(x_2, y_2, z_2, label='2', marker='^', alpha=0.2, color='green')
     ax.scatter3D(x_3, y_3, z_3, label='3', marker='s', alpha=0.2, color='green')
-    # Plot incorrect
     correct = samples[samples['Correct']==False]
     Class1 = correct[correct['True Class Label']==1]
     Class2 = correct[correct['True Class Label']==2]
@@ -161,7 +158,6 @@ def plotCorrectClassifiedSamples(samplePath, path='samples_classified_scatterplo
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
-    #ax.get_legend().remove()
     green_patch = mpatches.Patch(color='green', label='Correct')
     red_patch = mpatches.Patch(color='red', label='Incorrect')
     ax.legend(handles=[green_patch, red_patch], loc='upper left', title='Classification')
