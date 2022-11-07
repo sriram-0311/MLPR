@@ -79,37 +79,27 @@ def likelihood_ratio_test(data, mu, sigma, prior):
     plt.clf()
     plt.close()
 
-    # Plot the Decision boundary
-    # fig, ax = plt.subplots(1,1, figsize=(5, 5))
-    # ax.plot(data[data['True Class Label'] == 1]['x'], data[data['True Class Label'] == 1]['y'], 'bo', markersize=2)
-    # ax.plot(data[data['True Class Label'] == 2]['x'], data[data['True Class Label'] == 2]['y'], 'ro', markersize=2)
-    # ax.plot(data[data['Decision'] == 1]['x'], data[data['Decision'] == 1]['y'], 'go', markersize=2)
-    # ax.plot(data[data['Decision'] == 2]['x'], data[data['Decision'] == 2]['y'], 'yo', markersize=2)
-
+    #Plot the decision boundary of the classifier using the threshold value
     fig, ax = plt.subplots(1,1,figsize=(5,5))
-    for idx,row in data.iterrows():
-        true_label = row['True Class Label']
-        decision   = row['Decision']
-        x = row['x']
-        y = row['y']
-        if(true_label==1):
-            if(true_label==decision):
-                ax.plot(x,y,'go', alpha=0.1)
-            else:
-                ax.plot(x,y,'ro', alpha=0.1)
-        else:
-            if(true_label==decision):
-                ax.plot(x,y,'g^', alpha=0.1)
-            else:
-                ax.plot(x,y,'r^', alpha=0.1)
-
-    legend = ax.legend({'True Class 1':'go'},loc="upper right", title="Decisions")
-    ax.add_artist(legend)
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
+    ax.set_title('Decision Boundary')
+    x = np.linspace(-20, 20, 100)
+    y = np.linspace(-20, 20, 100)
+    X, Y = np.meshgrid(x, y)
+    Z = np.zeros((100, 100))
+    for i in range(0, 100):
+        for j in range(0, 100):
+            Z[i, j] = ((stats.multivariate_normal.pdf([X[i, j], Y[i, j]], mean=mu[0], cov=sigma[0]) * w1) + (stats.multivariate_normal.pdf([X[i, j], Y[i, j]], mean=mu[1], cov=sigma[1]) * w2))/stats.multivariate_normal.pdf([X[i, j], Y[i, j]], mean=mu[2], cov=sigma[2])
+    plt.contour(X, Y, Z, [thy_threshold], colors='k', linestyles='dashed')
+    plt.scatter(data[data['True Class Label'] == 1]['x'], data[data['True Class Label'] == 1]['y'], c='b', s=0.7, label='Class 1')
+    plt.scatter(data[data['True Class Label'] == 2]['x'], data[data['True Class Label'] == 2]['y'], c='r', s=0.7, label='Class 2')
+    ax.set_xlabel('x1')
+    ax.set_ylabel('x2')
+    ax.set_xlim(-4, 11)
+    ax.set_ylim(-5, 10)
     ax.yaxis.grid(color='lightgrey')
     ax.xaxis.grid(color='lightgrey')
     ax.set_axisbelow(True)
+    plt.legend()
     plt.savefig('./HW3/Decision_boundary.png', dpi=500)
     plt.clf()
     plt.close()
