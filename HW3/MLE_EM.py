@@ -89,14 +89,19 @@ if __name__ == "__main__":
     Train10KSamples = read_data("./HW3/Train_10000samples.csv")
     # Read in the 100 training data
     Train100Samples = read_data("./HW3/Train_100samples.csv")
+    # Read in the 1000 training data
+    Train1000Samples = read_data("./HW3/Train_1000samples.csv")
     Validation20KSamples = read_data("./HW3/Validation_20Ksamples.csv")
     # Fit a Gaussian mixture model for the data
     mu, sigma, prior, weights = TrainAndPlot(Train10KSamples, "10K")
+    # Fit a gaussian model for 1000 samples
+    mu1000, sigma1000, prior1000, weights1000 = TrainAndPlot(Train1000Samples,"1000Samples")
     # Fit a gaussian model for 100 samples
     mu100, sigma100, prior100, weights100 = TrainAndPlot(Train100Samples,"100Samples")
     # Test the model with likelihood ratio test
     likelihood_ratio_test(Validation20KSamples, mu, sigma, prior, './HW3/MLE_TrainedWith_10K_Samples', [weights[0], weights[1]], "Train with 10K samples")
-    likelihood_ratio_test(Validation20KSamples, mu100, sigma100, prior100, './HW3/MLE_TrainedWith_100_Samples', [weights100[0], weights100[1]], "Train with 100 samples")
+    likelihood_ratio_test(Validation20KSamples, mu100, sigma100, prior100, './HW3/MLE_TrainedWith_1000_Samples', [weights100[0], weights100[1]], "Train with 1000 samples")
+    likelihood_ratio_test(Validation20KSamples, mu1000, sigma1000, prior1000, './HW3/MLE_TrainedWith_100_Samples', [weights1000[0], weights1000[1]], "Train with 100 samples")
 
 
 
