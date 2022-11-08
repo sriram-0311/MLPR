@@ -11,7 +11,7 @@ def read_data(filename):
     return data
 
 # Likelihood ratio test for loaded data
-def likelihood_ratio_test(data, mu, sigma, prior, NameOfFile, weights):
+def likelihood_ratio_test(data, mu, sigma, prior, NameOfFile, weights, Flag):
     #initialize variables
     Discriminant = []
     Decision = []
@@ -49,18 +49,18 @@ def likelihood_ratio_test(data, mu, sigma, prior, NameOfFile, weights):
 
     df = df.sort_values(by=['PError'])
     ExperimentalMinimum = df.iloc[0]
-    print('Experimental Minimum PError: ', ExperimentalMinimum['PError'])
-    print('Experimental Threshold: ', ExperimentalMinimum['Threshold'])
-    print('Experimental True Positive Rate: ', ExperimentalMinimum['True Positive Rate'])
-    print('Experimental False Positive Rate: ', ExperimentalMinimum['False Positive Rate'])
+    print('Experimental Minimum PError: ' + Flag, ExperimentalMinimum['PError'])
+    print('Experimental Threshold: ' + Flag, ExperimentalMinimum['Threshold'])
+    print('Experimental True Positive Rate: ' + Flag, ExperimentalMinimum['True Positive Rate'])
+    print('Experimental False Positive Rate: ' + Flag, ExperimentalMinimum['False Positive Rate'])
 
     TheoriticalRates = [len([x for x in class1 if x < thy_threshold])/len(class1),len([x for x in class2 if x < thy_threshold])/len(class2)]
     TheoriticalPError = (prior[0]+prior[1])*TheoriticalRates[0]+prior[2]*(1-TheoriticalRates[1])
 
-    print('Theoritical Minimum PError: ', TheoriticalPError)
-    print('Theoritical Threshold: ', thy_threshold)
-    print('Theoritical True Positive Rate: ', TheoriticalRates[1])
-    print('Theoritical False Positive Rate: ', TheoriticalRates[0])
+    print('Theoritical Minimum PError: ' + Flag, TheoriticalPError)
+    print('Theoritical Threshold: '+ Flag, thy_threshold)
+    print('Theoritical True Positive Rate: ' + Flag, TheoriticalRates[1])
+    print('Theoritical False Positive Rate: ' + Flag, TheoriticalRates[0])
 
     # Plot the ROC Curve
     fig, ax = plt.subplots(1,1, figsize=(5, 5))
@@ -109,5 +109,5 @@ if __name__ == "__main__":
     mu = np.array([[5,0],[0,4],[3,2]])
     sigma = np.array([[[4,0],[0,2]],[[1,0],[0,3]],[[2,0],[0,2]]])
     prior = np.array([0.3,0.3,0.4])
-    likelihood_ratio_test(data, mu, sigma, prior, './HW3/Validation_20Ksamples_TheoriticallyBest', [0.5, 0.5])
+    likelihood_ratio_test(data, mu, sigma, prior, './HW3/Validation_20Ksamples_TheoriticallyBest', [0.5, 0.5], 'Theoritically Best')
 

@@ -26,7 +26,7 @@ def fit_gaussian(data, mixtureComponents, classLabel):
     # Return the parameters
     return GMModel.means_, GMModel.covariances_, GMModel.weights_, prior
 
-def TrainAndPlot(data):
+def TrainAndPlot(data, NameofFile):
     # Fit a Gaussian mixture model for class 1
     mu1, sigma1, w1, prior1 = fit_gaussian(data, 2, 1)
     print('mu1: ', mu1)
@@ -78,7 +78,7 @@ def TrainAndPlot(data):
     prior = np.array([w1[0]*prior1, w1[1]*prior1, prior2])
     w = np.array([w1[0], w1[1], w2[0]])
     #Save plots
-    plt.savefig('./HW3/Estimated Gaussian models.png', dpi=500)
+    plt.savefig('./HW3/'+NameofFile+'Estimated Gaussian models.png', dpi=500)
     plt.clf()
     plt.close()
     # Return the parameters
@@ -87,11 +87,16 @@ def TrainAndPlot(data):
 if __name__ == "__main__":
     # Read in the 10K training data
     Train10KSamples = read_data("./HW3/Train_10000samples.csv")
+    # Read in the 100 training data
+    Train100Samples = read_data("./HW3/Train_100samples.csv")
     Validation20KSamples = read_data("./HW3/Validation_20Ksamples.csv")
     # Fit a Gaussian mixture model for the data
-    mu, sigma, prior, weights = TrainAndPlot(Train10KSamples)
+    mu, sigma, prior, weights = TrainAndPlot(Train10KSamples, "10K")
+    # Fit a gaussian model for 100 samples
+    mu100, sigma100, prior100, weights100 = TrainAndPlot(Train100Samples,"100Samples")
     # Test the model with likelihood ratio test
-    likelihood_ratio_test(Validation20KSamples, mu, sigma, prior, './HW3/MLE_TrainedWith_10K_Samples', [weights[0], weights[1]])
+    likelihood_ratio_test(Validation20KSamples, mu, sigma, prior, './HW3/MLE_TrainedWith_10K_Samples', [weights[0], weights[1]], "Train with 10K samples")
+    likelihood_ratio_test(Validation20KSamples, mu100, sigma100, prior100, './HW3/MLE_TrainedWith_100_Samples', [weights100[0], weights100[1]], "Train with 100 samples")
 
 
 
