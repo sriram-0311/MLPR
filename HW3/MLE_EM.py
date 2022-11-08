@@ -5,6 +5,7 @@ import math
 import sys
 import pandas as pd
 from sklearn.mixture import GaussianMixture as GMM
+from LikelihoodRatio import likelihood_ratio_test
 
 # Read in the data
 def read_data(filename):
@@ -14,56 +15,83 @@ def read_data(filename):
 # Fit a gaussian model for the data and return the parameters using fitgmdist function
 def fit_gaussian(data, mixtureComponents, classLabel):
     X = np.empty((0,2), float)
+    prior = len(data[data['True Class Label'] == classLabel])/len(data)
     # Fit a Gaussian mixture with EM using fitgmdist function
-    GMModel = GMM(n_components = mixtureComponents, covariance_type = 'diag', verbose = 0, tol = 1e-3)
-    # for i, rows in data.iterrows():
-    #     if rows['True Class Label'] == classLabel:
-    #         if i == 0:
-    #             X = np.array([rows['x'], rows['y']])
-    #         else:
-    #             try:
-    #                 X = np.vstack((X, np.array([rows['x'], rows['y']])))
-    #             except UnboundLocalError:
-    #                 X = np.array([rows['x'], rows['y']])
+    GMModel = GMM(n_components = mixtureComponents, covariance_type = 'full', verbose = 0, tol = 1e-6)
     X = data[data['True Class Label'] == classLabel][['x', 'y']].to_numpy()
-    # print(X.shape)
+    print(X.shape)
     # print(X)
     GMModel = GMModel.fit(X)
     #gmm = stats.fitgmdist(data, 1)
     # Return the parameters
-    return GMModel.means_, GMModel.covariances_, GMModel.weights_
+    return GMModel.means_, GMModel.covariances_, GMModel.weights_, prior
 
-if __name__ == "__main__":
-    # Read in the data
-    data = read_data("./HW3/Train_10000samples.csv")
-    # Fit a Gaussian mixture model for the data
-    gmm_mean, gmm_cov, gmm_weight = fit_gaussian(data, 2, 1)
-    # Print the parameters
-    print('mu: ', gmm_mean)
-    print('sigma: ', gmm_cov)
-    print('prior: ', gmm_weight)
-
+def TrainAndPlot(data):
+    # Fit a Gaussian mixture model for class 1
+    mu1, sigma1, w1, prior1 = fit_gaussian(data, 2, 1)
+    print('mu1: ', mu1)
+    print('sigma1: ', sigma1)
+    print('w1: ', w1)
+    print('prior1: ', prior1)
+    #Plot Gaussian mixture model of Class 1
     # Plot contours of the estimated mixture model for class 1
-    #fig, ax = plt.subplots(1,2, figsize=(5,5))
+    fig, ax = plt.subplots(1,2, figsize=(10,5))
+    plt.subplots_adjust(wspace=0.5, hspace=0.5)
     x, y = np.mgrid[-10:10:.01, -10:10:.01]
     pos = np.empty(x.shape + (2,))
     pos[:, :, 0] = x
     pos[:, :, 1] = y
-    rv = stats.multivariate_normal(gmm_mean[1], gmm_cov)
-    plt.contour(x, y, rv.pdf(pos))
-    plt.scatter(data[data['True Class Label'] == 1]['x'], data[data['True Class Label'] == 1]['y'], s=1)
+    # create multivariate mixture gaussian pdf
+    class11 = stats.multivariate_normal(mu1[0], sigma1[0])
+    class12 = stats.multivariate_normal(mu1[1], sigma1[1])
+    # plot contours of class1
+    ax[0].contour(x, y, w1[0]*class11.pdf(pos) + w1[1]*class12.pdf(pos))
+    ax[0].set_title('Estimated Mixture Model for Class 1')
+    ax[0].set_xlabel('x1')
+    ax[0].set_ylabel('x2')
+    ax[0].set_ylim(-3,8)
+    ax[0].set_xlim(-3,9)
+    ax[0].scatter(data[data['True Class Label'] == 1]['x'], data[data['True Class Label'] == 1]['y'], s=0.5, c='r')
+    # Fit a Gaussian mixture model for class 2
+    mu2, sigma2, w2, prior2 = fit_gaussian(data, 1, 2)
+    print('mu2: ', mu2)
+    print('sigma2: ', sigma2)
+    print('w2: ', w2)
+    print('prior2: ', prior2)
+    # Plot contours of the estimated mixture model for class 2
+    # Plot contours of the estimated mixture model for class 2
+    x, y = np.mgrid[-10:10:.01, -10:10:.01]
+    pos = np.empty(x.shape + (2,))
+    pos[:, :, 0] = x
+    pos[:, :, 1] = y
+    ax[1].set_title('Estimated Model for Class 2')
+    ax[1].set_xlabel('x1')
+    ax[1].set_ylabel('x2')
+    ax[1].set_ylim(-2,6)
+    ax[1].set_xlim(0,6)
+    rv = stats.multivariate_normal(mu2[0], sigma2[0])
+    ax[1].contour(x, y, rv.pdf(pos))
+    ax[1].scatter(data[data['True Class Label'] == 2]['x'], data[data['True Class Label'] == 2]['y'], s=1)
+    #Combine the parameters
+    mu = np.array([mu1[0], mu1[1], mu2[0]])
+    sigma = np.array([sigma1[0], sigma1[1], sigma2[0]])
+    prior = np.array([w1[0]*prior1, w1[1]*prior1, prior2])
+    w = np.array([w1[0], w1[1], w2[0]])
+    #Save plots
+    plt.savefig('./HW3/Estimated Gaussian models.png', dpi=500)
+    plt.clf()
+    plt.close()
+    # Return the parameters
+    return mu, sigma, prior, w
 
-    class2_mean, class2_cov, class2_weight = fit_gaussian(data, 1, 2)
-    print('mu2: ', class2_mean)
-    print('sigma2: ', class2_cov)
-    print('prior2: ', class2_weight)
+if __name__ == "__main__":
+    # Read in the 10K training data
+    Train10KSamples = read_data("./HW3/Train_10000samples.csv")
+    Validation20KSamples = read_data("./HW3/Validation_20Ksamples.csv")
+    # Fit a Gaussian mixture model for the data
+    mu, sigma, prior, weights = TrainAndPlot(Train10KSamples)
+    # Test the model with likelihood ratio test
+    likelihood_ratio_test(Validation20KSamples, mu, sigma, prior, './HW3/MLE_TrainedWith_10K_Samples', [weights[0], weights[1]])
 
-    # # Plot contours of the estimated mixture model for class 2
-    # x, y = np.mgrid[-10:10:.01, -10:10:.01]
-    # pos = np.empty(x.shape + (2,))
-    # pos[:, :, 0] = x
-    # pos[:, :, 1] = y
-    # rv = stats.multivariate_normal(class2_mean, class2_cov)
-    # ax[0,1].contour(x, y, rv.pdf(pos))
 
-    plt.show()
+

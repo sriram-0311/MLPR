@@ -11,13 +11,13 @@ def read_data(filename):
     return data
 
 # Likelihood ratio test for loaded data
-def likelihood_ratio_test(data, mu, sigma, prior):
+def likelihood_ratio_test(data, mu, sigma, prior, NameOfFile, weights):
     #initialize variables
     Discriminant = []
     Decision = []
     # Calculate theoritical threshold value
     thy_threshold = (prior[0]+prior[1])/prior[2]
-    w1, w2 = 0.5, 0.5
+    w1, w2 = weights[0], weights[1]
     # Calculate the likelihood ratio
     for i in range(0, len(data)):
         x = data.iloc[i, 0]
@@ -75,7 +75,7 @@ def likelihood_ratio_test(data, mu, sigma, prior):
     ax.set_xlim(0,1)
     ax.set_ylim(0,1)
     plt.legend()
-    plt.savefig('./HW3/ROC_curve.png', dpi=500)
+    plt.savefig(NameOfFile + '_ROC_Curve.png', dpi=500)
     plt.clf()
     plt.close()
 
@@ -100,7 +100,7 @@ def likelihood_ratio_test(data, mu, sigma, prior):
     ax.xaxis.grid(color='lightgrey')
     ax.set_axisbelow(True)
     plt.legend()
-    plt.savefig('./HW3/Decision_boundary.png', dpi=500)
+    plt.savefig(NameOfFile + '_Decision_boundary.png', dpi=500)
     plt.clf()
     plt.close()
 
@@ -109,5 +109,5 @@ if __name__ == "__main__":
     mu = np.array([[5,0],[0,4],[3,2]])
     sigma = np.array([[[4,0],[0,2]],[[1,0],[0,3]],[[2,0],[0,2]]])
     prior = np.array([0.3,0.3,0.4])
-    likelihood_ratio_test(data, mu, sigma, prior)
+    likelihood_ratio_test(data, mu, sigma, prior, './HW3/Validation_20Ksamples_TheoriticallyBest', [0.5, 0.5])
 
