@@ -23,7 +23,7 @@ def likelihood_ratio_test(data, mu, sigma, prior, NameOfFile, weights, Flag):
         x = data.iloc[i, 0]
         y = data.iloc[i, 1]
         # Calculate the likelihood ratio
-        likelihood_ratio = ((stats.multivariate_normal.pdf([x, y], mean=mu[0], cov=sigma[0]) * w1) + (stats.multivariate_normal.pdf([x, y], mean=mu[1], cov=sigma[1]) * w2))/stats.multivariate_normal.pdf([x, y], mean=mu[2], cov=sigma[2])
+        likelihood_ratio = stats.multivariate_normal.pdf([x, y], mean=mu[2], cov=sigma[2])/((stats.multivariate_normal.pdf([x, y], mean=mu[0], cov=sigma[0]) * w1) + (stats.multivariate_normal.pdf([x, y], mean=mu[1], cov=sigma[1]) * w2))
         Discriminant.append(likelihood_ratio)
         # If the likelihood ratio is larger than the threshold value, then the point is classified as class 1
         if likelihood_ratio > thy_threshold:
@@ -43,9 +43,9 @@ def likelihood_ratio_test(data, mu, sigma, prior, NameOfFile, weights, Flag):
     # Generate the ROC Curve
     for i, rows in data.iterrows():
         discriminant = rows['Discriminant']
-        FalsePositive = len([x for x in class1 if x < discriminant])/len(class1)
-        TruePositive = len([x for x in class2 if x < discriminant])/len(class2)
-        df.loc[i] = [TruePositive, FalsePositive, discriminant, (prior[0]+prior[1])*FalsePositive+prior[2]*(1-TruePositive)]
+        FalsePositive = len([x for x in class1 if x > discriminant])/len(class1)
+        TruePositive = len([x for x in class2 if x > discriminant])/len(class2)
+        df.loc[i] = [TruePositive, FalsePositive, discriminant, (prior[2])*FalsePositive + (prior[0]+prior[1])*(1-TruePositive)]
 
     df = df.sort_values(by=['PError'])
     ExperimentalMinimum = df.iloc[0]
@@ -54,7 +54,7 @@ def likelihood_ratio_test(data, mu, sigma, prior, NameOfFile, weights, Flag):
     print('Experimental True Positive Rate: ' + Flag, ExperimentalMinimum['True Positive Rate'])
     print('Experimental False Positive Rate: ' + Flag, ExperimentalMinimum['False Positive Rate'])
 
-    TheoriticalRates = [len([x for x in class1 if x < thy_threshold])/len(class1),len([x for x in class2 if x < thy_threshold])/len(class2)]
+    TheoriticalRates = [len([x for x in class1 if x > thy_threshold])/len(class1),len([x for x in class2 if x > thy_threshold])/len(class2)]
     TheoriticalPError = (prior[0]+prior[1])*TheoriticalRates[0]+prior[2]*(1-TheoriticalRates[1])
 
     print('Theoritical Minimum PError: ' + Flag, TheoriticalPError)
