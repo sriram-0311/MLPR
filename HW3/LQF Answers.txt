@@ -1,0 +1,40 @@
+LQF Answers for 10K samples training
+w = minimize(loss, w0, args=(x, y), method='Nelder-Mead', options={'xtol': 1e-8, 'disp': True})
+Optimization terminated successfully.
+         Current function value: -0.000000
+         Iterations: 735
+         Function evaluations: 1130
+[-0.70887016  1.16727288 -0.00628578 -0.26179504  0.30515414 -0.14169592]
+Priors [0.59895, 0.40105]
+Experimental Minimum PError:  0.17545
+Experimental Threshold:  0.5507649344428949
+Experimental True Positive Rate:  0.7989028799401571
+Experimental False Positive Rate:  0.1582769847232657
+minThreshold 0.5507649344428949
+minPError 0.17545
+
+LQF Answers for 1000 samples training
+         Current function value: -0.000003
+         Iterations: 686
+         Function evaluations: 1061
+[-0.16637956  0.98254166 -0.1296248  -0.26936658  0.4214147  -0.18371092]
+Priors [0.59895, 0.40105]
+Experimental Minimum PError:  0.1759
+Experimental Threshold:  0.5725885144344756
+Experimental True Positive Rate:  0.7888043884802394
+Experimental False Positive Rate:  0.1522664663160531
+minThreshold 0.5725885144344756
+minPError 0.1759
+
+LQF Answers for 100 samples training
+   Current function value: -0.000281
+         Iterations: 594
+         Function evaluations: 930
+[ 2.08084047 -0.07299362 -0.21155528 -0.21663687  0.57786066 -0.27472779]
+Priors [0.59895, 0.40105]
+Experimental Minimum PError:  0.2025
+Experimental Threshold:  0.5399909157643445
+Experimental True Positive Rate:  0.796534097992769
+Experimental False Positive Rate:  0.20185324317555722
+minThreshold 0.5399909157643445
+minPError 0.2025

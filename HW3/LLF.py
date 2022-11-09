@@ -98,7 +98,7 @@ def threshold(x, y, w,prior, data):
         discriminant = rows['Discriminant']
         FalsePositive = len([x for x in class1 if x > discriminant])/len(class1)
         TruePositive = len([x for x in class2 if x > discriminant])/len(class2)
-        df.loc[i] = [TruePositive, FalsePositive, discriminant, (prior[0])*FalsePositive+prior[1]*(1-TruePositive)]
+        df.loc[i] = [TruePositive, FalsePositive, discriminant, ((prior[0])*FalsePositive)+((prior[1])*(1-TruePositive))]
 
     df = df.sort_values(by=['PError'])
     ExperimentalMinimum = df.iloc[0]
@@ -111,7 +111,7 @@ def threshold(x, y, w,prior, data):
 
 if __name__ == "__main__":
     # Read in the data
-    data = read_data('HW3/Train_10000samples.csv')
+    data = read_data('HW3/Train_100samples.csv')
     # Read validation data
     validationData = read_data('HW3/Validation_20Ksamples.csv')
     # Extract the data

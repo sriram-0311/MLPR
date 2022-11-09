@@ -1,0 +1,37 @@
+LLF 10K samples training
+ Current function value: 0.000000
+         Iterations: 44
+         Function evaluations: 122
+[1.00188889 1.80644444 3.42736111]
+Priors [0.59895, 0.40105]
+Experimental Minimum PError:  0.40105
+Experimental Threshold:  1.0
+Experimental True Positive Rate:  0.0
+Experimental False Positive Rate:  0.0
+minThreshold 1.0
+minPError 0.40105
+
+LLF 1000 samples training
+Current function value: 0.000000
+         Iterations: 45
+         Function evaluations: 129
+[2.40033333 1.10366667 4.31591667]
+Priors [0.59895, 0.40105]
+Experimental Minimum PError:  0.40105
+Experimental Threshold:  1.0
+Experimental True Positive Rate:  0.0
+Experimental False Positive Rate:  0.0
+minThreshold 1.0
+minPError 0.40105
+
+LLF 100 samples training
+Iterations: 42
+         Function evaluations: 129
+[-0.66333333  3.217       1.67825   ]
+Priors [0.59895, 0.40105]
+Experimental Minimum PError:  0.40105
+Experimental Threshold:  1.0
+Experimental True Positive Rate:  0.0
+Experimental False Positive Rate:  0.0
+minThreshold 1.0
+minPError 0.40105

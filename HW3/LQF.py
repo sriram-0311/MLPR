@@ -82,7 +82,7 @@ def threshold(x, y, w,prior, data):
 
 if __name__ == "__main__":
     # Read in the data
-    data = LLF.read_data('HW3/Train_10000samples.csv')
+    data = LLF.read_data('HW3/Train_100samples.csv')
     # Read validation data
     validationData = LLF.read_data('HW3/Validation_20Ksamples.csv')
     # Extract the data
