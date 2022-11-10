@@ -24,7 +24,7 @@ def MAPLogLikelihood(x, y, sigma_x, sigma_y, sigma, theta):
     cov = np.array([[sigma_x**2, 0], [0, sigma_y**2]])
     prior = np.dot(np.dot(theta.T, np.linalg.inv(cov)), theta)
 
-    return (1/(2*K))*(log_likelihood + prior)
+    return (-1/(2*K))*(log_likelihood + prior)
 
 for K in [1,2,3,4,40]:
     # print("K = ", K)
@@ -65,7 +65,11 @@ for K in [1,2,3,4,40]:
             F[i,j] = MAPLogLikelihood(x, y, sigma_x, sigma_y, sigma, np.array([X1[i,j], X2[i,j]]))
     plt.figure()
     cont = plt.contourf(X1, X2, F)
-    plt.plot(TruePos[0], TruePos[1], 'ro')
+    plt.plot(TruePos[0], TruePos[1], 'r+')
+    # plot colorbar
+    cbar = plt.colorbar(cont)
+    cbar.ax.set_ylabel('MAP Log Likelihood')
+    # plot center of the contour
     plt.plot(x[:,0], x[:,1], 'bo', label='Reference Vectors')
     plt.title('MAP Log Likelihood')
     plt.xlabel('x')
