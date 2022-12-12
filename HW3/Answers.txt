@@ -1,3 +1,5 @@
+(torch-gpu) anushsriramramesh@Bheema MLPR % /Users/anushsriramramesh/miniforge3/envs/torch-gpu/bin/python "/Use
+rs/anushsriramramesh/Library/CloudStorage/OneDrive-NortheasternUniversity/ML PR/ML_HW2/MLPR/HW3/MLE_EM.py"
 (5970, 2)
 mu1:  [[ 0.0385675   4.00982853]
  [ 5.05078929 -0.03789508]]
@@ -17,14 +19,14 @@ sigma2:  [[[1.99980031 0.01897604]
 w2:  [1.]
 prior2:  0.403
 (604, 2)
-mu1:  [[ 5.03453564 -0.19805046]
- [ 0.00801916  4.0794066 ]]
-sigma1:  [[[ 3.50184413  0.04770827]
-  [ 0.04770827  2.11508437]]
+mu1:  [[ 0.00801916  4.0794066 ]
+ [ 5.03453564 -0.19805046]]
+sigma1:  [[[ 1.18624024 -0.04206093]
+  [-0.04206093  3.44799112]]
 
- [[ 1.18624024 -0.04206093]
-  [-0.04206093  3.44799112]]]
-w1:  [0.4563386 0.5436614]
+ [[ 3.50184413  0.04770827]
+  [ 0.04770827  2.11508437]]]
+w1:  [0.5436614 0.4563386]
 prior1:  0.604
 /Users/anushsriramramesh/Library/CloudStorage/OneDrive-NortheasternUniversity/ML PR/ML_HW2/MLPR/HW3/MLE_EM.py:38: MatplotlibDeprecationWarning: The resize_event function was deprecated in Matplotlib 3.6 and will be removed two minor releases later. Use callbacks.process('resize_event', ResizeEvent(...)) instead.
   fig, ax = plt.subplots(1,2, figsize=(10,5))
@@ -52,27 +54,27 @@ sigma2:  [[[1.62116626 0.21652357]
   [0.21652357 1.8528063 ]]]
 w2:  [1.]
 prior2:  0.41
-Experimental Minimum PError: Train with 10K samples 0.17502912674165202
-Experimental Threshold: Train with 10K samples 0.6280600071649237
-Experimental True Positive Rate: Train with 10K samples 0.7854382246602668
-Experimental False Positive Rate: Train with 10K samples 0.14834293346690042
-Theoritical Minimum PError: Train with 10K samples 0.19414530006116867
+Experimental Minimum PError: Train with 10K samples 0.16343381115805672
+Experimental Threshold: Train with 10K samples 0.6642388304718246
+Experimental True Positive Rate: Train with 10K samples 0.901383867348211
+Experimental False Positive Rate: Train with 10K samples 0.2594540445780115
+Theoritical Minimum PError: Train with 10K samples 0.17573771888487186
 Theoritical Threshold: Train with 10K samples 1.4813895781637716
-Theoritical True Positive Rate: Train with 10K samples 0.8991397581348959
-Theoritical False Positive Rate: Train with 10K samples 0.2571166207529844
-Experimental Minimum PError: Train with 1000 samples 0.18183568429225228
-Experimental Threshold: Train with 1000 samples 0.6164789402078013
-Experimental True Positive Rate: Train with 1000 samples 0.7960354070564768
-Experimental False Positive Rate: Train with 1000 samples 0.16645796811086067
-Theoritical Minimum PError: Train with 1000 samples 0.20142867990558092
+Theoritical True Positive Rate: Train with 10K samples 0.7974068071312804
+Theoritical False Positive Rate: Train with 10K samples 0.15760914934468653
+Experimental Minimum PError: Train with 1000 samples 0.1739416109680117
+Experimental Threshold: Train with 1000 samples 0.8690709303895815
+Experimental True Positive Rate: Train with 1000 samples 0.8678469018825583
+Experimental False Positive Rate: Train with 1000 samples 0.23407630019200268
+Theoritical Minimum PError: Train with 1000 samples 0.18258973421248892
 Theoritical Threshold: Train with 1000 samples 1.4390243902439024
-Theoritical True Positive Rate: Train with 1000 samples 0.8856751028550056
-Theoritical False Positive Rate: Train with 1000 samples 0.2619584272476834
-Experimental Minimum PError: Train with 100 samples 0.17441422660041145
-Experimental Threshold: Train with 100 samples 0.5554999183278666
-Experimental True Positive Rate: Train with 100 samples 0.7674853509537464
-Experimental False Positive Rate: Train with 100 samples 0.13632189665247516
-Theoritical Minimum PError: Train with 100 samples 0.19207297839581483
+Theoritical True Positive Rate: Train with 1000 samples 0.811494826081536
+Theoritical False Positive Rate: Train with 1000 samples 0.17847900492528593
+Experimental Minimum PError: Train with 100 samples 0.16276351849123327
+Experimental Threshold: Train with 100 samples 0.6016195643989353
+Experimental True Positive Rate: Train with 100 samples 0.8978930307941653
+Experimental False Positive Rate: Train with 100 samples 0.25528007346189163
+Theoritical Minimum PError: Train with 100 samples 0.17493645022037538
 Theoritical Threshold: Train with 100 samples 1.525252525252525
-Theoritical True Positive Rate: Train with 100 samples 0.8884179030046129
-Theoritical False Positive Rate: Train with 100 samples 0.24484514567159196
+Theoritical True Positive Rate: Train with 100 samples 0.7935419523750156
+Theoritical False Positive Rate: Train with 100 samples 0.15426997245179064

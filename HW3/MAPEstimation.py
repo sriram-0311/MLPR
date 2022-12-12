@@ -5,6 +5,7 @@ import math
 import random
 import sys
 import os
+import scipy
 
 TrueTheta = np.random.randint(0, 360)
 TrueTheta = np.radians(TrueTheta)
@@ -13,6 +14,17 @@ TrueR = np.random.random()*0.75
 TruePos = np.array([TrueR*np.cos(TrueTheta), TrueR*np.sin(TrueTheta)])
 
 print("True Position: ", TruePos)
+
+# plot the centre of the contour
+def center_of_mass(X):
+    # calculate center of mass of a closed polygon
+    x = X[:,0]
+    y = X[:,1]
+    g = (x[:-1]*y[1:] - x[1:]*y[:-1])
+    A = 0.5*g.sum()
+    cx = ((x[:-1] + x[1:])*g).sum()
+    cy = ((y[:-1] + y[1:])*g).sum()
+    return 1./(6*A)*np.array([cx,cy])
 
 # MAP Log Likelihood function
 def MAPLogLikelihood(x, y, sigma_x, sigma_y, sigma, theta):
@@ -27,6 +39,8 @@ def MAPLogLikelihood(x, y, sigma_x, sigma_y, sigma, theta):
     return (-1/(2*K))*(log_likelihood + prior)
 
 for K in [1,2,3,4,40]:
+    plt.figure()
+    plt.plot(TruePos[0], TruePos[1], 'r+', label="True Position") # Plot the true position
     # print("K = ", K)
     ReferenceTheta = np.linspace(0, 360, K+1)
     x = np.zeros((K,2))
@@ -53,6 +67,7 @@ for K in [1,2,3,4,40]:
     sigma_y = 0.25
 
     # Plotting the contour plot for the MAP Log Likelihood
+    mapEstimate = np.inf
     x1 = np.linspace(-2, 2, 100)
     x2 = np.linspace(-2, 2, 100)
     X1, X2 = np.meshgrid(x1, x2)
@@ -63,9 +78,17 @@ for K in [1,2,3,4,40]:
             # print("X1: ", X1[i][j], "X2: ", X2[i][j])
             # print("MAPLogLikelihood: ", MAPLogLikelihood(x, y, sigma_x, sigma_y, sigma, np.array([X1[i][j], X2[i][j]])))
             F[i,j] = MAPLogLikelihood(x, y, sigma_x, sigma_y, sigma, np.array([X1[i,j], X2[i,j]]))
-    plt.figure()
+            if F[i,j] < mapEstimate:
+                mapEstimate = F[i,j]
+                mapEstimatePos = np.array([X1[i,j], X2[i,j]])
+    # Plot the minimum of the loglikelihood function as the MAP estimate
+    #min_result = scipy.optimize.minimize(MAPLogLikelihood(x,y,sigma_x, sigma_y, sigma,np.array([0,0])),[0,0],args=(ReferenceTheta), method='SLSQP', bounds = [(-2,2),(-2,2)])
+    # print("MAP Estimate: ", mapEstimatePos)
+    # plt.plot(mapEstimatePos[0], mapEstimatePos[1], 'r*', label='MAP Estimate')
+    # plot the position estimated by MAP as a red star
     cont = plt.contourf(X1, X2, F)
-    plt.plot(TruePos[0], TruePos[1], 'r+')
+    # plot the centre of the contour
+    plt.plot(center_of_mass(cont.allsegs[-1][0])[0], center_of_mass(cont.allsegs[-1][0])[1], 'rx', label='Map Estimate')
     # plot colorbar
     cbar = plt.colorbar(cont)
     cbar.ax.set_ylabel('MAP Log Likelihood')
@@ -74,4 +97,5 @@ for K in [1,2,3,4,40]:
     plt.title('MAP Log Likelihood')
     plt.xlabel('x')
     plt.ylabel('y')
+    plt.legend()
     plt.savefig('./HW3/MAPLogLikelihood'+ str(K) + '.png')
