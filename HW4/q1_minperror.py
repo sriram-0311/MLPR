@@ -3,16 +3,21 @@ from typing import Tuple
 import numpy as np
 import scipy.stats
 
-# class means
+'''The means of the 4 classes'''
 mu = np.asarray([[1, 1, 1],
                  [-1, -1, 1],
                  [-1, 1, -1],
                  [1, -1, -1]])
 
+'''The covariance matrix'''
 covall = np.eye(3)
 
 
 def min_perror(x: np.ndarray, y: np.ndarray) -> Tuple[float, np.ndarray]:
+    '''Compute the min perror of the test set
+    x: the test set
+    y: the labels of the test set
+    '''
     global mu, covall
 
     pdf0 = scipy.stats.multivariate_normal.pdf(x, mu[0, :], covall)
@@ -37,10 +42,13 @@ def min_perror(x: np.ndarray, y: np.ndarray) -> Tuple[float, np.ndarray]:
 
 
 if __name__ == '__main__':
+    '''Load the test set and compute the min perror'''
     with open("q1data/test.npy", 'rb') as f:
         xtest = np.load(f).T
         ytest = np.load(f).T
         f.close()
+
+    '''Compute the min perror'''
 
     perror, confusion = min_perror(xtest, ytest)
     print("min perror of test set: %s" % perror)

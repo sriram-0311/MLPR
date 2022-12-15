@@ -10,6 +10,10 @@ from tqdm import tqdm
 
 
 def plot_model_against_data(model, data, outfile=None):
+    '''Plot the model's performance versus the data.
+    model: the model to plot
+    data: the data to plot
+    outfile: the file to save the plot to, or None to show the plot'''
     if outfile is None:
         raise AssertionError("outfile cannot be none!")
     fig, axes = plt.subplots()
@@ -38,6 +42,12 @@ def plot_model_against_data(model, data, outfile=None):
 
 
 def fit_model_to_k(data: np.ndarray, k: int, num_starts: int = 4) -> mixture.GaussianMixture:
+    '''
+    Fit a model to k components
+    data: the data to fit the model to
+    k: the number of components to fit
+    num_starts: the number of times to start the model fitting
+    '''
     # fit model to k gaussian components
     mix = mixture.GaussianMixture(n_components=k,
                                   covariance_type='diag',
@@ -51,6 +61,11 @@ def eval_gm_loglikeli(model: mixture.GaussianMixture, test: np.ndarray) -> float
 
 
 def kfold_exp(k_compoonents: int, data: np.ndarray, nfolds=5) -> float:
+    '''kfold cross validation experiment
+    k_compoonents: the number of components to fit
+    data: the data to fit the model to
+    nfolds: the number of folds to use
+    '''
     data = data.T  # oop
 
     samples = data.shape[0]
@@ -84,6 +99,12 @@ def kfold_exp(k_compoonents: int, data: np.ndarray, nfolds=5) -> float:
 # output best component
 def component_selection(components_to_check: List[int], data: np.ndarray, test_data: np.ndarray, plot_selections=False) \
         -> Tuple[int, mixture.GaussianMixture]:
+    '''Select the best number of components to use
+    components_to_check: the components to check
+    data: the data to fit the model to
+    test_data: the data to test the model on
+    plot_selections: whether to plot the model's performance versus the data
+    '''
     comp_to_score = {}
     comp_to_testLLH = {}
 

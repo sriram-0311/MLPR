@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 
 
 def construct_pmodel(percep):
+    '''Construct a model with percep perceptrons in the hidden layer
+    percep: the number of perceptrons in the hidden layer
+    returns: the constructed model
+    '''
     model = keras.Sequential(
         layers=[
             keras.layers.Dense(percep, activation='elu'),
@@ -18,6 +22,14 @@ def construct_pmodel(percep):
 
 
 def model_order_selection(xData, yData, max_percep=20, nfold=10, epoch_per_part=10):
+    '''Select the best model order using k-fold cross validation
+    xData: the data to fit the model to
+    yData: the labels to fit the model to
+    max_percep: the maximum number of perceptrons to check
+    nfold: the number of folds to use
+    epoch_per_part: the number of epochs to train for each fold
+    returns: the selected model
+    '''
     prior_errors = []
     serie = {}
     for npercep in range(1, max_percep + 1):
@@ -47,6 +59,15 @@ def model_order_selection(xData, yData, max_percep=20, nfold=10, epoch_per_part=
 
 
 def model_select_and_test(xTrain, yTrain, train_labels, xTest, yTest, pref='dataset'):
+    '''Select the best model order using k-fold cross validation
+    xTrain: the data to fit the model to
+    yTrain: the labels to fit the model to
+    train_labels: the labels to fit the model to
+    xTest: the data to test the model on
+    yTest: the labels to test the model on
+    pref: the prefix to use for the saved figure
+    returns: the test error
+    '''
     points, model = model_order_selection(xTrain, yTrain)
 
     mpe, _ = q1_minperror.min_perror(xTrain, train_labels)
@@ -75,6 +96,14 @@ def model_select_and_test(xTrain, yTrain, train_labels, xTest, yTest, pref='data
 
 
 def kfold_evaluate(p, xData, yData, nfolds=10, epoch_per_part=10):
+    '''Evaluate the model using k-fold cross validation
+    p: the number of perceptrons in the hidden layer
+    xData: the data to fit the model to
+    yData: the labels to fit the model to
+    nfolds: the number of folds to use
+    epoch_per_part: the number of epochs to train for each fold
+    returns: the average p-error
+    '''
     samples = xData.shape[0]
     data_ixs = np.arange(samples)
     np.random.shuffle(data_ixs)
@@ -107,6 +136,7 @@ def kfold_evaluate(p, xData, yData, nfolds=10, epoch_per_part=10):
 
 
 if __name__ == '__main__':
+    '''Load the data and run the model selection and test'''
 
     with open("q1data/test.npy", 'rb') as f:
         xtest = np.load(f).T
@@ -114,12 +144,15 @@ if __name__ == '__main__':
         otest = np.load(f).T
         f.close()
 
+    # print("xtest: %s ltest: %s otest: %s" % (xtest.shape, ltest.shape, otest.shape))
+
     test_sizes = [100, 200, 500, 1000, 2000, 5000]
     test_results = []
     min_perror, _ = q1_minperror.min_perror(xtest, ltest)
     test_min_perror = [min_perror] * len(test_sizes)
 
     for size in test_sizes:
+        '''Load the data and run the model selection and test'''
         with open("q1data/trainset_%s.npy" % size, 'rb') as f:
             xtrain = np.load(f).T
             train_labels = np.load(f).T
@@ -127,6 +160,8 @@ if __name__ == '__main__':
             f.close()
         score = model_select_and_test(xtrain, otrain, train_labels, xtest, otest, pref=str(size))
         test_results.append(score)
+
+        '''Plot the results'''
 
     fig, ax = plt.subplots()
     ax.set_xscale('log')

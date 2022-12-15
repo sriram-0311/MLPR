@@ -12,6 +12,9 @@ covall = np.eye(3)
 ## assume equal priors
 
 def generate_data(nsamples):
+    '''Generate data from a mixture of gaussians
+    nsamples: the number of samples to generate
+    '''
     global mu, covall
     y = np.random.randint(0, high=4, size=nsamples)
     x = np.zeros([nsamples, 3])

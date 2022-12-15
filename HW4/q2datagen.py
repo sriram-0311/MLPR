@@ -5,6 +5,10 @@ from tqdm import tqdm
 
 
 def generate_data(nsamples, plot_data=False):
+    '''Generate data from a mixture of gaussians
+    nsamples: the number of samples to generate
+    plot_data: whether to plot the data or not
+    '''
     global mu, covall
 
     priors = [0.15, 0.35, 0.2, 0.3]
