@@ -1,11 +1,12 @@
 import numpy as np
 
-# class means
+'''The means of the 4 classes'''''
 mu = np.asarray([[1, 1, 1],
                  [-1, -1, 1],
                  [-1, 1, -1],
                  [1, -1, -1]])
 
+'''The covariance matrix'''
 covall = np.eye(3)
 
 
@@ -32,6 +33,7 @@ def generate_data(nsamples):
 
     return x.T, y.T, np.eye(4)[y].T
 
+'''Generate train data'''
 
 for train_size in [100, 200, 500, 1000, 2000, 5000]:
     xtrain, ytrain, one_hot = generate_data(train_size)
@@ -40,6 +42,8 @@ for train_size in [100, 200, 500, 1000, 2000, 5000]:
         np.save(f, ytrain)
         np.save(f, one_hot)
         f.close()
+
+'''Generate test data'''
 
 xtest, ytest, one_hot = generate_data(100000)
 with open("q1data/test.npy", 'wb') as f:

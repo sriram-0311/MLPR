@@ -138,15 +138,19 @@ def component_selection(components_to_check: List[int], data: np.ndarray, test_d
 
 
 if __name__ == '__main__':
+    '''Load data and run model selection experiment'''
 
     with open("q2data/test.npy", 'rb') as f:
         xtest = np.load(f).T
         ltest = np.load(f).T
         f.close()
 
+        '''Model selection experiment'''
+
     conf_matrix = np.zeros([4, 6])
 
     for exp_trial in tqdm(range(0, 30), desc="model selection experiment", position=0):  # run 30 experiements
+        '''Load data'''
         test_sizes = [10, 100, 1000, 10000]
         test_results = []
         best_components = []
@@ -160,11 +164,13 @@ if __name__ == '__main__':
             test_results.append(test_score)
             best_components.append(best_ncomp)
             conf_matrix[ix][best_ncomp - 1] += 1
+        '''Plot the best components selected per test set'''
         if exp_trial == 0:
             fig, ax = plt.subplots()
             ax.scatter(np.asarray(test_sizes), np.asarray(best_components))
             ax.figure.savefig("figures/q2/components_selected_per_test.png")
 
+    '''Plot the model selection matrix'''
     print("Model selection matrix: ")
     print(conf_matrix.T)
     for (ix, size) in enumerate([10, 100, 1000, 10000]):
