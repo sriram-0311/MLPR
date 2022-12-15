@@ -1,3 +1,4 @@
+'''This file is used to compute the min perror of the test set using the    means and covariance matrix of the 4 classes from q1datagen.py'''
 from typing import Tuple
 
 import numpy as np

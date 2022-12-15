@@ -1,3 +1,4 @@
+'''Generate data for question 2'''
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt

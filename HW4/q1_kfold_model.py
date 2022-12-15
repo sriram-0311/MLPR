@@ -1,3 +1,4 @@
+'''This file contains the code for the k-fold cross validation model selection for the perceptron model in q1_minperror.py'''
 import numpy as np
 import keras
 import keras.layers

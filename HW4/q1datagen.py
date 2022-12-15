@@ -1,3 +1,4 @@
+'''Generate data for question 1'''
 import numpy as np
 
 '''The means of the 4 classes'''''

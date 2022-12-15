@@ -1,3 +1,4 @@
+'''EM algorithm for Gaussian Mixture Models (GMMs) with k-fold cross validation and model selection.'''
 from typing import List, Tuple
 
 import sklearn.mixture as mixture
